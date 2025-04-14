@@ -1,0 +1,10 @@
+__pycache__/
+
+env/
+
+.env
+
+.DS_Store  # macOS
+Thumbs.db   # Windows
+
+.vscode/
