@@ -20,12 +20,17 @@ app.add_middleware(
 )
 
 class Pregunta(BaseModel):
-    texto: str
+    texto: str = "¿Cuál es la capital de Francia?"
 
 class Respuesta(BaseModel):
     response: str
 
-@app.post("/preguntar", response_model=Respuesta)
+@app.post(
+    "/preguntar",
+    response_model=Respuesta,
+    summary="Realiza una pregunta al modelo",
+    description="Envía una pregunta al modelo seleccionado y recibe una respuesta generada."
+)
 def preguntar(pregunta: Pregunta) -> Respuesta:
     try:
         response = ollama.generate(model=MODELO, prompt=pregunta.texto)
@@ -43,7 +48,12 @@ def preguntar(pregunta: Pregunta) -> Respuesta:
         )
 
 
-@app.get("/modelos" , response_model=list[str])
+@app.get(
+    "/modelos",
+    response_model=list[str],
+    summary="Lista los modelos disponibles",
+    description="Devuelve una lista con los nombres de los modelos disponibles en Ollama."
+)
 def listar_modelos() -> list[str]:
     try:
         response = ollama.list()
