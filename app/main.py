@@ -1,11 +1,16 @@
 import os
 import ollama
+import logging
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
 
 #por defecto deepseek-r1
 MODELO = os.getenv("MODELO", "deepseek-r1")
@@ -32,16 +37,20 @@ class Respuesta(BaseModel):
     description="Envía una pregunta al modelo seleccionado y recibe una respuesta generada."
 )
 def preguntar(pregunta: Pregunta) -> Respuesta:
+    logging.info(f"Pregunta recibida: {pregunta.texto}")
     try:
         response = ollama.generate(model=MODELO, prompt=pregunta.texto)
     except Exception as e:
+        logging.error(f"Error al generar respuesta: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al generar respuesta: {str(e)}"
         )
     if "response" in response:
+        logging.info("Respuesta generada correctamente.")
         return Respuesta(response=response['response'])
     else:
+        logging.error("La respuesta del modelo no contiene la clave 'response'.")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="La respuesta del modelo no contiene la clave 'response'."
