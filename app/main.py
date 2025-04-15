@@ -1,28 +1,17 @@
-import os
 import ollama
 import logging
 from fastapi import HTTPException, status
-from pydantic import BaseModel
-from dotenv import load_dotenv
 from .app import create_app
+from .config import settings
+from .schemas import Pregunta, Respuesta
 
 app = create_app()
 
-load_dotenv()
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
-#por defecto deepseek-r1
-MODELO = os.getenv("MODELO", "deepseek-r1")
-
-
-class Pregunta(BaseModel):
-    texto: str = "¿Cuál es la capital de Francia?"
-
-class Respuesta(BaseModel):
-    response: str
 
 @app.post(
     "/preguntar",
@@ -38,7 +27,7 @@ def preguntar(pregunta: Pregunta) -> Respuesta:
         )
     logging.info(f"Pregunta recibida: {pregunta.texto}")
     try:
-        response = ollama.generate(model=MODELO, prompt=pregunta.texto)
+        response = ollama.generate(model=settings.MODELO, prompt=pregunta.texto)
     except Exception as e:
         logging.error(f"Error al generar respuesta: {str(e)}")
         raise HTTPException(
