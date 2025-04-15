@@ -1,10 +1,12 @@
 import os
 import ollama
 import logging
-from fastapi import FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException, status
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from .app import create_app
+
+app = create_app()
 
 load_dotenv()
 logging.basicConfig(
@@ -15,14 +17,6 @@ logging.basicConfig(
 #por defecto deepseek-r1
 MODELO = os.getenv("MODELO", "deepseek-r1")
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 class Pregunta(BaseModel):
     texto: str = "¿Cuál es la capital de Francia?"
@@ -37,6 +31,11 @@ class Respuesta(BaseModel):
     description="Envía una pregunta al modelo seleccionado y recibe una respuesta generada."
 )
 def preguntar(pregunta: Pregunta) -> Respuesta:
+    if not pregunta.texto or not pregunta.texto.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="La pregunta no puede estar vacía."
+        )
     logging.info(f"Pregunta recibida: {pregunta.texto}")
     try:
         response = ollama.generate(model=MODELO, prompt=pregunta.texto)
@@ -70,3 +69,14 @@ def listar_modelos() -> list[str]:
         return model_names
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al listar modelos: {str(e)}")
+
+
+@app.get(
+    "/",
+    summary="Información de la API",
+    description="Muestra información básica sobre la API."
+)
+def root() -> dict[str, str]:
+    return {
+        "mensaje": "API de preguntas a modelos Ollama. Usa /preguntar para interactuar y /modelos para ver los modelos disponibles."
+    }
