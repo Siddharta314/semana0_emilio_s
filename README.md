@@ -112,3 +112,18 @@ https://github.com/ollama/ollama/blob/main/docs/modelfile.md#parameter
 
 
 ## Postman
+
+### Importar Colección de Postman
+
+Para importar la colección de Postman, sigue estos pasos:
+
+1. Abre Postman.
+2. Haz clic en "Import" en la esquina superior izquierda.
+3. Selecciona el archivo `FastApi-Ollama.postman_collection.json` desde la carpeta `postman/`.
+4. Haz clic en "Importar".
+
+### Capturas de Pantalla
+
+A continuación se presentan una captura de pantalla de las prueba realizada:
+
+![Captura 1](postman/captura1.png)

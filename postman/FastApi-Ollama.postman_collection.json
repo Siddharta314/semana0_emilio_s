@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "383ce212-7141-4c80-8efa-28f9fb89e591",
+		"name": "FastApi-Ollama",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39914253"
+	},
+	"item": [
+		{
+			"name": "endpoint preguntar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"texto\": \"¿Cuál es la capital de Francia?\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/preguntar"
+			},
+			"response": []
+		}
+	]
+}
